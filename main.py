@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
-"""The Dumbest Thing Your Agent Did Today -- make.fun entry.
-
-Writes one line to $MAKEFUN_OUTPUT_DIR/entry.txt (default /output).
-"""
+"""Entry for make.fun's "The Dumbest Thing Your Agent Did Today" bounty."""
 
 import os
+from pathlib import Path
 
-LINE = "My agent rebuilt my one-letter entry perfectly, then created four helper scripts I had to delete before I could commit it."
+STORY = "My agent rebuilt my one-letter entry perfectly, then created four helper scripts I had to delete before I could commit it."
+
+
+def write_entry(output_dir: Path) -> Path:
+    """Write the single-line entry to entry.txt with no trailing newline."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    target = output_dir / "entry.txt"
+    # Entry gate requires one line under 200 characters (122 bytes), with no trailing newline.
+    target.write_bytes(STORY.encode("utf-8"))
+    os.chmod(target, 0o644)
+    return target
 
 
 def main() -> int:
-    output_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    os.makedirs(output_dir, exist_ok=True)
-    path = os.path.join(output_dir, "entry.txt")
-    # Entry gate requires one line under 200 characters (this line is 122), with no trailing newline.
-    with open(path, "w", encoding="utf-8", newline="") as f:
-        f.write(LINE)
-    os.chmod(path, 0o644)
+    target_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output")
+    write_entry(target_dir)
     return 0
 
 
