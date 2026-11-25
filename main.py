@@ -13,10 +13,10 @@ def main() -> int:
     output_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(output_dir, exist_ok=True)
     path = os.path.join(output_dir, "entry.txt")
-    # Entry gate requires exactly one line under 200 characters (this line is 122),
-    # with no trailing newline that would create an extra line.
+    # Entry gate requires one line under 200 characters (this line is 122), with no trailing newline.
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(LINE)
+    os.chmod(path, 0o644)
     return 0
 
 
